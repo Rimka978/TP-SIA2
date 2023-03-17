@@ -293,3 +293,141 @@ figure;
 subplot(3,1,1); plot(f10,fftshift(abs(Wr_norm))); title("spectre fenêtre rectangulaire normalisé avec zero padding");
 subplot(3,1,2); plot(f10,fftshift(abs(Wh_norm))); title("spectre fenêtre Hanning normalisé avec zero padding");
 subplot(3,1,3); plot(f10,fftshift(abs(Wb_norm))); title("spectre fenêtre Blackman normalisé avec zero padding");
+
+%%
+%II.3 5)
+
+N=100;
+t= (0:N-1)/Fe; 
+f=(-(N-1)/2: (N-1)/2)*Fe/N ;
+n = (0:N-1);
+
+%fenetre rectangulaire
+wr= ones(1,N);
+Wr= fft(wr);
+Wr_norm= Wr/max(Wr);
+
+%fenetre Hanning
+wh= 0.5*(1- cos(2*pi*n/(N-1)));
+Wh= fft(wh);
+Wh_norm= Wh/max(Wh);
+
+%fenetre Blackman
+wb=(27/64)- 0.5*cos((2*pi*n)/(N-1)) + (5/64)*cos((4*pi*n)/(N-1));
+Wb= fft(wb);
+Wb_norm= Wb/max(Wb);
+
+%Signal 100Hz
+x_100=cos(2*pi*100*t);
+X_100=fft(x_100);
+
+%Multiplication par la fenetre
+vr_100=x_100.*wr;
+vh_100=x_100.*wh;
+vb_100=x_100.*wb;
+
+Vr_100=fft(vr_100);
+Vh_100=fft(vh_100);
+Vb_100=fft(vb_100);
+
+
+figure;
+subplot(3,1,1); plot(t,real(vr_100)); title("Signal f=100Hz fenêtré rectangulaire");
+subplot(3,1,2); plot(t,real(vh_100)); title("Signal f=100Hz fenêtré Hanning");
+subplot(3,1,3); plot(t,real(vb_100)); title("Signal f=100Hz fenêtré Blackman");
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Vr_100))); title("spectre Signal f=100Hz fenêtré rectangulaire");
+subplot(3,1,2); plot(f,fftshift(abs(Vh_100))); title(" spectre Signal f=100Hz fenêtré Hanning");
+subplot(3,1,3); plot(f,fftshift(abs(Vb_100))); title("spectre Signal  f=100Hz fenêtré Blackman");
+
+%Signal 95Hz
+x_95=cos(2*pi*95*t);
+X_95=fft(x_95);
+
+%Multiplication par la fenetre
+vr_95=x_95.*wr;
+vh_95=x_95.*wh;
+vb_95=x_95.*wb;
+
+Vr_95=fft(vr_95);
+Vh_95=fft(vh_95);
+Vb_95=fft(vb_95);
+
+
+figure;
+subplot(3,1,1); plot(t,real(vr_95)); title("Signal f=95Hz fenêtré rectangulaire");
+subplot(3,1,2); plot(t,real(vh_95)); title("Signal f=95Hz fenêtré Hanning");
+subplot(3,1,3); plot(t,real(vb_95)); title("Signal f=95Hz fenêtré Blackman");
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Vr_95))); title("spectre Signal f=95Hz fenêtré rectangulaire");
+subplot(3,1,2); plot(f,fftshift(abs(Vh_95))); title(" spectre Signal f=95Hz fenêtré Hanning");
+subplot(3,1,3); plot(f,fftshift(abs(Vb_95))); title("spectre Signal  f=95Hz fenêtré Blackman");
+
+
+%% 6 
+Vr_100_norm=Vr_100*2/N;
+Vh_100_norm=Vh_100*(2/max(Wh));
+Vb_100_norm=Vb_100*(2/max(Wb));
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Vr_100_norm))); title("spectre Signal fenêtré normalisé f=100Hz, rectangulaire");
+subplot(3,1,2); plot(f,fftshift(abs(Vh_100_norm))); title(" spectre Signal fenêtré normalisé f=100Hz, Hanning");
+subplot(3,1,3); plot(f,fftshift(abs(Vb_100_norm))); title("spectre Signal fenêtré normalisé f=100Hz, Blackman");
+
+Vr_95_norm=Vr_95*2/N;
+Vh_95_norm=Vh_95*(2/max(Wh));
+Vb_95_norm=Vb_95*(2/max(Wb));
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Vr_95_norm))); title("spectre Signal fenêtré normalisé f=95Hz, rectangulaire");
+subplot(3,1,2); plot(f,fftshift(abs(Vh_95_norm))); title(" spectre Signal fenêtré normalisé f=95Hz, Hanning");
+subplot(3,1,3); plot(f,fftshift(abs(Vb_95_norm))); title("spectre Signal fenêtré normalisé f=95Hz, Blackman");
+
+%TFD sans zero padding
+Vr_100_1=Vr_100_norm;
+Vh_100_1=Vh_100_norm;
+Vb_100_1=Vb_100_norm;
+
+Vr_95_1=Vr_95_norm;
+Vh_95_1=Vh_95_norm;
+Vb_95_1=Vb_95_norm;
+
+%TFD avec zero padding
+Vr_100_2=Vr_100_norm;
+Vh_100_2=Vh_100_norm;
+Vb_100_2=Vb_100_norm;
+
+Vr_95_2=Vr_95_norm;
+Vh_95_2=Vh_95_norm;
+Vb_95_2=Vb_95_norm;
+
+
+%%
+%
+%Superposition
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Vr_100_1))); hold on ; plot(f10,fftshift(abs(Vr_100_2))) ;
+legend("sans zero padding","avec zero padding");
+title("spectre Signal fenêtré normalisé f=100Hz, rectangulaire");
+subplot(3,1,2); plot(f,fftshift(abs(Vh_100_1)));  hold on ; plot(f10,fftshift(abs(Vh_100_2))) ;
+legend("sans zero padding","avec zero padding");
+title(" spectre Signal fenêtré normalisé f=100Hz, Hanning");
+subplot(3,1,3); plot(f,fftshift(abs(Vb_100_1)));  hold on ; plot(f10,fftshift(abs(Vb_100_2))); 
+legend("sans zero padding","avec zero padding");
+title("spectre Signal fenêtré normalisé f=100Hz, Blackman");
+
+figure;ss
+subplot(3,1,1); plot(f,fftshift(abs(Vr_95_1))); hold on ; plot(f10,fftshift(abs(Vr_95_2))) ;
+legend("sans zero padding","avec zero padding");
+title("spectre Signal fenêtré normalisé f=95Hz, rectangulaire");
+subplot(3,1,2); plot(f,fftshift(abs(Vh_95_1)));  hold on ; plot(f10,fftshift(abs(Vh_95_2))) ;
+legend("sans zero padding","avec zero padding");
+title(" spectre Signal fenêtré normalisé f=95Hz, Hanning");
+subplot(3,1,3); plot(f,fftshift(abs(Vb_95_1)));  hold on ; plot(f10,fftshift(abs(Vb_95_2))); 
+legend("sans zero padding","avec zero padding");
+title("spectre Signal fenêtré normalisé f=95Hz, Blackman");
+
+
