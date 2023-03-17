@@ -430,4 +430,186 @@ subplot(3,1,3); plot(f,fftshift(abs(Vb_95_1)));  hold on ; plot(f10,fftshift(abs
 legend("sans zero padding","avec zero padding");
 title("spectre Signal fenêtré normalisé f=95Hz, Blackman");
 
+%% III
+N=100;
+Fe=1000;
+f=(-(N-1)/2: (N-1)/2)*Fe/N ;
+n = (0:N-1);
+
+A1=1;
+f1=95;
+phi1=0;
+
+
+%A2=0.1;
+f2=140;
+phi2=0;
+
+y= A1*sin(2*pi*n*f1/Fe + phi1) + A2*sin(2*pi*n*f2/Fe + phi2);
+Y=fft(y); 
+
+w=zeros(1,N);
+%fenetre rectangulaire
+wr=w;
+wr(1:N)= ones(1,N);
+Wr= fft(wr);
+Wr_norm= Wr/max(Wr);
+
+%fenetre Hanning
+wh=w;
+wh(1:N)= 0.5*(1- cos(2*pi*n/(N-1)));
+Wh= fft(wh);
+Wh_norm= Wh/max(Wh);
+
+%fenetre Blackman
+wb=w;
+wb(1:N)=(27/64)- 0.5*cos((2*pi*n)/(N-1)) + (5/64)*cos((4*pi*n)/(N-1));
+Wb= fft(wb);
+Wb_norm= Wb/max(Wb);
+
+
+yfr= y.*wr ;
+yfh= y.*wh ;
+yfb= y.*wb ;
+
+Yfr= fft(yfr)*(2/max(Wr));
+Yfh= fft(yfh)*(2/max(Wh));
+Yfb= fft(yfb)*(2/max(Wb));
+
+figure;
+subplot(3,1,1); plot(n,real(yfr)); title(sprintf("Signal A1=1 A2= %d fenetré rectangulaire", A2));
+subplot(3,1,2); plot(n,real(yfh)); title(sprintf("Signal A1=1 A2= %d fenetré Hanning",A2));
+subplot(3,1,3); plot(n,real(yfb)); title(sprintf("Signal A1=1 A2= %d fenetré Blackman", A2));
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Yfr))); title(sprintf("spectre Signal A1=1 A2= %d fenêtré rectangulaire", A2));
+subplot(3,1,2); plot(f,fftshift(abs(Yfh))); title(sprintf(" spectre Signal A1=1 A2= %d fenêtré Hanning",A2));
+subplot(3,1,3); plot(f,fftshift(abs(Yfb))); title(sprintf("spectre Signal  A1=1 A2= %d fenêtré Blackman", A2));
+
+
+%%
+%Q3:
+
+
+N=100;
+Fe=1000;
+f=(-(N-1)/2: (N-1)/2)*Fe/N ;
+n = (0:N-1);
+
+A1=1;
+f1=95;
+phi1=0;
+
+
+A2=0.3;
+f2=140;
+phi2=0;
+G=0.05;
+bruit=  sqrt(G)*randn(1,N);
+yb= A1*sin(2*pi*n*f1/Fe + phi1) + A2*sin(2*pi*n*f2/Fe + phi2) + bruit;
+Yb=fft(yb); 
+
+w=zeros(1,N);
+%fenetre rectangulaire
+wr=w;
+wr(1:N)= ones(1,N);
+Wr= fft(wr);
+Wr_norm= Wr/max(Wr);
+
+%fenetre Hanning
+wh=w;
+wh(1:N)= 0.5*(1- cos(2*pi*n/(N-1)));
+Wh= fft(wh);
+Wh_norm= Wh/max(Wh);
+
+%fenetre Blackman
+wb=w;
+wb(1:N)=(27/64)- 0.5*cos((2*pi*n)/(N-1)) + (5/64)*cos((4*pi*n)/(N-1));
+Wb= fft(wb);
+Wb_norm= Wb/max(Wb);
+
+
+yfr= yb.*wr ;
+yfh= yb.*wh ;
+yfb= yb.*wb ;
+
+Yfr= fft(yfr)*(2/max(Wr));
+Yfh= fft(yfh)*(2/max(Wr));
+Yfb= fft(yfb)*(2/max(Wr));
+
+figure;
+subplot(3,1,1); plot(n,real(yfr)); title(sprintf("Signal bruité de sigma= %d  fenetré rectangulaire", G));
+subplot(3,1,2); plot(n,real(yfh)); title(sprintf("Signal bruité de sigma= %d  fenetré Hanning",G));
+subplot(3,1,3); plot(n,real(yfb)); title(sprintf("Signal bruité de sigma= %d  fenetré Blackman", G));
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Yfr))); title(sprintf("spectre Signal bruité de sigma= %d  fenêtré rectangulaire", G));
+subplot(3,1,2); plot(f,fftshift(abs(Yfh))); title(sprintf(" spectre Signal bruité de sigma= %d  Hz fenêtré Hanning",G));
+subplot(3,1,3); plot(f,fftshift(abs(Yfb))); title(sprintf("spectre Signal  bruité de sigma= %d  fenêtré Blackman", G));
+
+%variance trouvé = 0.05
+
+
+%%
+N=100;
+Fe=1000;
+f=(-(N-1)/2: (N-1)/2)*Fe/N ;
+n = (0:N-1);
+
+A1=1;
+%f1=100;
+f1=95;
+phi1=0;
+
+
+A2=A1;
+f2=180;
+phi2=0;
+
+y = A1*sin(2*pi*n*f1/Fe + phi1) %+ A2*sin(2*pi*n*f2/Fe + phi2);
+y(33:66)=0;
+Y=fft(y); 
+
+
+
+w=zeros(1,N);
+%fenetre rectangulaire
+wr=w;
+wr(1:N)= ones(1,N);
+Wr= fft(wr);
+Wr_norm= Wr/max(Wr);
+
+%fenetre Hanning
+wh=w;
+wh(1:N)= 0.5*(1- cos(2*pi*n/(N-1)));
+Wh= fft(wh);
+Wh_norm= Wh/max(Wh);
+
+%fenetre Blackman
+wb=w;
+wb(1:N)=(27/64)- 0.5*cos((2*pi*n)/(N-1)) + (5/64)*cos((4*pi*n)/(N-1));
+Wb= fft(wb);
+Wb_norm= Wb/max(Wb);
+
+
+yfr= y.*wr ;
+yfh= y.*wh ;
+yfb= y.*wb ;
+
+Yfr= fft(yfr);
+Yfh= fft(yfh);
+Yfb= fft(yfb);
+
+figure;
+subplot(3,1,1); plot(n,real(yfr)); title(sprintf("Signal f0=%d Hz fenetré rectangulaire", f1));
+subplot(3,1,2); plot(n,real(yfh)); title(sprintf("Signal f0=%d Hz fenetré Hanning",f1));
+subplot(3,1,3); plot(n,real(yfb)); title(sprintf("Signal f0=%d Hz fenetré Blackman", f1));
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Yfr))); title(sprintf("spectre Signal f0=%d Hz fenêtré rectangulaire", f1));
+subplot(3,1,2); plot(f,fftshift(abs(Yfh))); title(sprintf(" spectre Signal f0=%d Hz fenêtré Hanning",f1));
+subplot(3,1,3); plot(f,fftshift(abs(Yfb))); title(sprintf("spectre Signal  f0=%d Hz fenêtré Blackman", f1));
+
+%Q4: enlever la seconde sinusoide et chercher le spectre
+%Q6: ajouter la deuxième sinusoïde avec une même amplitude 
 
