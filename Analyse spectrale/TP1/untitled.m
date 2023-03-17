@@ -613,3 +613,71 @@ subplot(3,1,3); plot(f,fftshift(abs(Yfb))); title(sprintf("spectre Signal  f0=%d
 %Q4: enlever la seconde sinusoide et chercher le spectre
 %Q6: ajouter la deuxième sinusoïde avec une même amplitude 
 
+
+%%% un chirp
+
+%%
+%Chirp 
+
+N=100;
+Fe=1000;
+t= (0:N-1)/Fe; 
+f=(-(N-1)/2: (N-1)/2)*Fe/N ;
+n = (0:N-1);
+
+a= 100;
+b= 1010;
+
+
+x= sin(2*pi*( a + b*t).*t);
+
+X=fft(x); 
+
+
+figure;
+plot(t,x); title("Signal chirp");
+figure;
+plot(f,fftshift(abs(X))); title("Spectre Signal chirp"); 
+
+%fenetre rectangulaire
+wr= ones(1,N);
+Wr= fft(wr);
+Wr_norm= Wr/max(Wr);
+
+%fenetre Hanning
+wh= 0.5*(1- cos(2*pi*n/(N-1)));
+Wh= fft(wh);
+Wh_norm= Wh/max(Wh);
+
+%fenetre Blackman
+wb=(27/64)- 0.5*cos((2*pi*n)/(N-1)) + (5/64)*cos((4*pi*n)/(N-1));
+Wb= fft(wb);
+Wb_norm= Wb/max(Wb);
+
+%Multiplication par la fenetre
+vr=x.*wr;
+vh=x.*wh;
+vb=x.*wb;
+
+Vr=fft(vr);
+Vh=fft(vh);
+Vb=fft(vb);
+
+
+figure;
+subplot(3,1,1); plot(t,real(vr)); title("Signal chirp fenêtré rectangulaire");
+subplot(3,1,2); plot(t,real(vh)); title("Signal chirp fenêtré Hanning");
+subplot(3,1,3); plot(t,real(vb)); title("Signal chirp fenêtré Blackman");
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Vr))); title("spectre Signal chirp fenêtré rectangulaire");
+subplot(3,1,2); plot(f,fftshift(abs(Vh))); title(" spectre Signal chirp fenêtré Hanning");
+subplot(3,1,3); plot(f,fftshift(abs(Vb))); title("spectre Signal  chirp fenêtré Blackman");
+
+% QUESTION 2 
+% APRES AVOIR TRACE LES DIFFERENTES TRANSFORMEES POUR LE SIGNAL ON VOIT
+% QU'AVEC LA FENETRE RECTANGULAIRE ON NE VOIT RIEN TANDISQU 'AVEC LES DEUX
+% AUTRES FENETREES ON ARRIVE A VOIR QUELQUE CHOSE AVEC CES DEUX FREQUENCES 
+
+
+
