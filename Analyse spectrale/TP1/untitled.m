@@ -198,3 +198,98 @@ plot(f10,fftshift(abs(X10_95_norm))); title("Spectre Signal Sinusoidal normalis�
 %calcul de l'erreur
 erreur_relatif4_100= abs((1 - max(X10_100_norm))/1)
 erreur_relatif4_95= abs((1 - max(X10_95_norm))/1)
+
+
+
+
+%%  II-2 fenetrage de la TFD
+
+%II.3 3)
+N=100;
+t= (0:N-1)/Fe; 
+n = (0:N-1);
+f=(-(N-1)/2: (N-1)/2)*Fe/N ;
+
+%fenetre rectangulaire
+wr= ones(1,N);
+Wr= fft(wr);
+%fenetre Hanning
+wh= 0.5*(1- cos(2*pi*n/(N-1)));
+Wh= fft(wh);
+%fenetre Blackman
+wb=(27/64)- 0.5*cos((2*pi*n)/(N-1)) + (5/64)*cos((4*pi*n)/(N-1));
+Wb= fft(wb);
+
+
+figure;
+subplot(3,1,1); plot(t,wr); title("fenetre rectangulaire");
+subplot(3,1,2); plot(t,wh); title("fenetre Hanning");
+subplot(3,1,3); plot(t,wb); title("fenetre Blackman");
+
+figure;
+subplot(3,1,1); plot(f,fftshift(abs(Wr))); title("spectre fenetre rectangulaire");
+subplot(3,1,2); plot(f,fftshift(abs(Wh))); title("spectre fenetre Hanning");
+subplot(3,1,3); plot(f,fftshift(abs(Wb))); title("spectre fenetre Blackman");
+
+%avec zero padding
+
+N=100;
+t= (0:N-1)/Fe; 
+f=(-(N-1)/2: (N-1)/2)*Fe/N ;
+n = (0:N-1);
+
+n10 = (0:N*10-1);
+f10=(-(N*10-1)/2: (N*10-1)/2)*Fe/(N*10) ;
+
+w=zeros(1,N*10);
+
+%fenetre rectangulaire
+wr=w;
+wr(1:N)= ones(1,N);
+Wr= fft(wr);
+%fenetre Hanning
+wh=w;
+wh(1:N)= 0.5*(1- cos(2*pi*n/(N-1)));
+Wh= fft(wh);
+%fenetre Blackman
+wb=w;
+wb(1:N)=(27/64)- 0.5*cos((2*pi*n)/(N-1)) + (5/64)*cos((4*pi*n)/(N-1));
+Wb= fft(wb);
+
+figure;
+subplot(3,1,1); plot(n10,wr); title("fenêtre rectangulaire avec zero padding");
+subplot(3,1,2); plot(n10,wh); title("fenêtre Hanning avec zero padding");
+subplot(3,1,3); plot(n10,wb); title("fenêtre Blackman avec zero padding");
+
+figure;
+subplot(3,1,1); plot(f10,fftshift(abs(Wr))); title("spectre fenêtre rectangulaire avec zero padding");
+subplot(3,1,2); plot(f10,fftshift(abs(Wh))); title("spectre fenêtre Hanning avec zero padding");
+subplot(3,1,3); plot(f10,fftshift(abs(Wb))); title("spectre fenêtre Blackman avec zero padding");
+
+
+%normalisation des fentres
+
+%Normalisation des fenetre
+w=zeros(1,N*10);
+%fenetre rectangulaire
+wr=w;
+wr(1:N)= ones(1,N);
+Wr= fft(wr);
+Wr_norm= Wr/max(Wr);
+
+%fenetre Hanning
+wh=w;
+wh(1:N)= 0.5*(1- cos(2*pi*n/(N-1)));
+Wh= fft(wh);
+Wh_norm= Wh/max(Wh);
+
+%fenetre Blackman
+wb=w;
+wb(1:N)=(27/64)- 0.5*cos((2*pi*n)/(N-1)) + (5/64)*cos((4*pi*n)/(N-1));
+Wb= fft(wb);
+Wb_norm= Wb/max(Wb);
+
+figure;
+subplot(3,1,1); plot(f10,fftshift(abs(Wr_norm))); title("spectre fenêtre rectangulaire normalisé avec zero padding");
+subplot(3,1,2); plot(f10,fftshift(abs(Wh_norm))); title("spectre fenêtre Hanning normalisé avec zero padding");
+subplot(3,1,3); plot(f10,fftshift(abs(Wb_norm))); title("spectre fenêtre Blackman normalisé avec zero padding");
