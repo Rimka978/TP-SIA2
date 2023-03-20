@@ -158,3 +158,435 @@ title("Signal estime");
 %6
 sound(e4 ,Fs);
 
+
+%%
+
+%4.1)Compréhension sur des signaux simulés
+%1
+
+
+% Construction du signal
+  Fe = 8000;     % Fréquence d'échantillonnage
+  dt =1/Fe; % Pas d'échantillonnage
+  N  = 1024;     % Nombre d'échantillons du signal
+  t  = (0:N-1)/Fe;     % Vecteur de temps
+  f  = (-(N-1)/2:(N-1)/2)*Fe/N ;   % Vecteur de fréquence
+  % Choix de la fenêtre
+  L   =  10   % longueur de la fenêtre
+  l=  0 : L-1 ;   % vecteur de la fenêtre
+
+  %rect
+fen = ones(1,L);
+
+%Hanning:
+fen= 0.5*(1- cos((2*pi*l)/(L-1)));
+
+%Blackman:
+fen=(27/64)- 0.5*cos((2*pi*l)/(L-1)) + (5/64)*cos((4*pi*l)/(L-1));
+  
+  d = 0:1:N-1;
+  x = double(d==40);% Signal à analyser
+% Parametres de la STFT
+  NFFT = N   % taille des fft
+  pas  = 1	   % pas d'échantillonnage en temps de la STFT
+
+
+  %rect
+fen1 = ones(1,L);
+
+%Hanning:
+fen2 = 0.5*(1- cos((2*pi*l)/(L-1)));
+
+%Blackman:
+fen3 =(27/64)- 0.5*cos((2*pi*l)/(L-1)) + (5/64)*cos((4*pi*l)/(L-1));
+
+
+
+% Calcul de la Transformée de Fourier à court terme
+  [X,tp,fp] = stft(x,NFFT,Fe,fen3,pas);
+
+
+% Affichage
+  figure(2); clf
+% Transformée de Fourier à court terme
+  subplot('position',[0.1 0.1 0.67 0.58])
+  imagesc(tp,fp,abs(X)); axis xy
+  title('Spectrogramme')
+  xlabel('Temps (sec)')
+  ylabel('fréquence (Hz)')
+  Xlim = axis; Xlim=Xlim(1:2);
+
+% Périodogramme
+  subplot('position',[0.85 0.1 0.14 0.58])
+  N2 = 8*N;
+  freq = (0:N2-1)/N2*Fe; TFx = fft(x,N2);
+  plot(abs(TFx(1:end/2)).^2/N,freq(1:end/2))
+  xlabel('Puissance')
+  title('Spectre')
+
+% Représentation temporelle
+  subplot('position',[0.1 0.75 0.67 0.2])
+  plot(t,x)
+  xlabel('Temps (sec)')
+  ylabel('Amplitude')
+  title('Représentation temporelle du signal')
+  ax = axis; ax(1:2) = Xlim; axis(ax)
+
+% Barre des couleurs
+  hand = subplot('position',[0.01 0.1 0.02 0.58]);
+  colorbar(hand)
+
+
+%2
+Fe=8000;
+N=1024;
+dt=1/Fe;
+t=(0:N-1)/Fe;
+f=(-(N-1)/2:(N-1)/2)*Fe/N ;
+d = 0:1:N-1;
+x1 = double(d==500);
+x= cos(2*pi*2000*t) ;
+t= 1/Fe*(1:length(x));
+
+% Parametres de la STFT
+NFFT = N; % taille des fft
+pas = 1; % pas d'echantillonnage en temps de la STFT
+% Choix de la fen^etre
+L =60;% longueur de la fenetre
+l=(0:L-1);
+
+%rect
+fen1 = ones(1,L);
+
+%Hanning:
+fen2= 0.5*(1- cos((2*pi*l)/(L-1)));
+
+%Blackman:
+fen3=(27/64)- 0.5*cos((2*pi*l)/(L-1)) + (5/64)*cos((4*pi*l)/(L-1));
+
+% Calcul de la Transform ?ee de Fourier à court terme
+[X,tp,fp]= stft(x,NFFT,Fe,fen1,pas);
+
+% Affichage
+figure(2)
+% Transformee de Fourier `a court terme
+subplot('position',[0.07 0.1 0.67 0.58])
+imagesc(tp,fp,abs(X)); axis xy
+title('Spectrogramme')
+xlabel('Temps (sec)')
+ylabel('fréquence (Hz)')
+Xlim = axis; Xlim=Xlim(1:2);
+
+% Periodogramme
+subplot('position',[0.78 0.1 0.2 0.58])
+N2 = 8*N;
+freq = (0:N2-1)/N2*Fe; TFx = fft(x,N2);
+plot(abs(TFx(1:end/2)).^2/N,freq(1:end/2))
+xlabel('Puissance')
+title('Spectre')
+
+% Representation temporelle
+subplot('position',[0.07 0.75 0.67 0.2])
+plot(1/Fe*(1:length(x)),x)
+xlabel('Temps (sec)')
+ylabel('Amplitude')
+title('Représentation temporelle du signal')
+ax = axis; ax(1:2) = Xlim; axis(ax)
+
+
+%3
+Fe=8000;
+N=1024;
+dt=1/Fe;
+t=(0:N-1)/Fe;
+f=(-(N-1)/2:(N-1)/2)*Fe/N ;
+x= [cos(2*pi*100*t(1:N/4)) ,  cos(2*pi*400*t((N/4)+1:end))];
+t= 1/Fe*(1:length(x));
+
+% Parametres de la STFT
+NFFT = N; % taille des fft
+pas = 1; % pas d2 ?echantillonnage en temps de la STFT
+% Choix de la fen^etre
+L = 100;% longueur de la fen^etre
+l=(0:L-1);
+
+%rect
+fen = ones(1,L);
+
+%Hanning:
+fen= 0.5*(1- cos((2*pi*l)/(L-1)));
+
+%Blackman:
+fen=(27/64)- 0.5*cos((2*pi*l)/(L-1)) + (5/64)*cos((4*pi*l)/(L-1));
+
+% Calcul de la Transform ?ee de Fourier à court terme
+[X,tp,fp]= stft(x,NFFT,Fe,fen,pas);
+
+% Affichage
+figure(2)
+% Transform ?ee de Fourier `a court terme
+subplot('position',[0.07 0.1 0.67 0.58])
+imagesc(tp,fp,abs(X)); axis xy
+title('Spectrogramme')
+xlabel('Temps (sec)')
+ylabel('fréquence (Hz)')
+Xlim = axis; Xlim=Xlim(1:2);
+
+% P ?eriodogramme
+subplot('position',[0.78 0.1 0.2 0.58])Fe=8000;
+N=1024;
+dt=1/Fe;
+t=(0:N-1)/Fe;
+f=(-(N-1)/2:(N-1)/2)*Fe/N ;
+x= [cos(2*pi*100*t(1:N/4)) ,  cos(2*pi*400*t((N/4)+1:end))];
+t= 1/Fe*(1:length(x));
+
+% Parametres de la STFT
+NFFT = N; % taille des fft
+pas = 1; % pas d2 ?echantillonnage en temps de la STFT
+% Choix de la fen^etre
+L = 100;% longueur de la fen^etre
+l=(0:L-1);
+
+%rect
+fen = ones(1,L);
+
+%Hanning:
+fen= 0.5*(1- cos((2*pi*l)/(L-1)));
+
+%Blackman:
+fen=(27/64)- 0.5*cos((2*pi*l)/(L-1)) + (5/64)*cos((4*pi*l)/(L-1));
+
+% Calcul de la Transform ?ee de Fourier à court terme
+[X,tp,fp]= stft(x,NFFT,Fe,fen,pas);
+
+% Affichage
+figure(2)
+% Transform ?ee de Fourier `a court terme
+subplot('position',[0.07 0.1 0.67 0.58])
+imagesc(tp,fp,abs(X)); axis xy
+title('Spectrogramme')
+xlabel('Temps (sec)')
+ylabel('fréquence (Hz)')
+Xlim = axis; Xlim=Xlim(1:2);
+Fe=8000;
+N=1024;
+dt=1/Fe;
+t=(0:N-1)/Fe;
+f=(-(N-1)/2:(N-1)/2)*Fe/N ;
+x= [cos(2*pi*100*t(1:N/4)) ,  cos(2*pi*400*t((N/4)+1:end))];
+t= 1/Fe*(1:length(x));
+
+% Parametres de la STFT
+NFFT = N; % taille des fft
+pas = 1; % pas d2 ?echantillonnage en temps de la STFT
+% Choix de la fen^etre
+L = 100;% longueur de la fen^etre
+l=(0:L-1);
+
+%rect
+fen = ones(1,L);
+
+%Hanning:
+fen= 0.5*(1- cos((2*pi*l)/(L-1)));
+
+%Blackman:
+fen=(27/64)- 0.5*cos((2*pi*l)/(L-1)) + (5/64)*cos((4*pi*l)/(L-1));
+
+% Calcul de la Transform ?ee de Fourier à court terme
+[X,tp,fp]= stft(x,NFFT,Fe,fen,pas);
+
+% Affichage
+figure(2)
+% Transform ?ee de Fourier `a court terme
+subplot('position',[0.07 0.1 0.67 0.58])
+imagesc(tp,fp,abs(X)); axis xy
+title('Spectrogramme')
+xlabel('Temps (sec)')
+ylabel('fréquence (Hz)')
+Xlim = axis; Xlim=Xlim(1:2);
+
+% P ?eriodogramme
+subplot('position',[0.78 0.1 0.2 0.58])
+N2 = 8*N;
+freq = (0:N2-1)/N2*Fe; TFx = fft(x,N2);
+plot(abs(TFx(1:end/2)).^2/N,freq(1:end/2))
+xlabel('Puissance')
+title('Spectre')
+
+% Repr ?esentation temporelle
+subplot('position',[0.07 0.75 0.67 0.2])
+plot(1/Fe*(1:length(x)),x)
+xlabel('Temps (sec)')
+ylabel('Amplitude')
+title('Représentation temporelle du signal')
+ax = axis; ax(1:2) = Xlim; axis(ax)
+
+
+
+% P ?eriodogramme
+subplot('position',[0.78 0.1 0.2 0.58])
+N2 = 8*N;
+freq = (0:N2-1)/N2*Fe; TFx = fft(x,N2);
+plot(abs(TFx(1:end/2)).^2/N,freq(1:end/2))
+xlabel('Puissance')
+title('Spectre')
+
+% Repr ?esentation temporelle
+subplot('position',[0.07 0.75 0.67 0.2])
+plot(1/Fe*(1:length(x)),x)
+xlabel('Temps (sec)')
+ylabel('Amplitude')
+title('Représentation temporelle du signal')
+ax = axis; ax(1:2) = Xlim; axis(ax)
+
+
+
+N2 = 8*N;
+freq = (0:N2-1)/N2*Fe; TFx = fft(x,N2);
+plot(abs(TFx(1:end/2)).^2/N,freq(1:end/2))
+xlabel('Puissance')
+title('Spectre')
+
+% Repr ?esentation temporelle
+subplot('position',[0.07 0.75 0.67 0.2])
+plot(1/Fe*(1:length(x)),x)
+xlabel('Temps (sec)')
+ylabel('Amplitude')
+title('Représentation temporelle du signal')
+ax = axis; ax(1:2) = Xlim; axis(ax)
+
+
+%4
+Fe=8000;
+N=1024;
+dt=1/Fe;
+t=(0:N-1)/Fe;
+f=(-(N-1)/2:(N-1)/2)*Fe/N ;
+a=100;
+b=1010;
+x= cos(2*pi*(a + b*t).*t);
+t= 1/Fe*(1:length(x));
+
+
+% Parametres de la STFT
+NFFT = N; % taille des fft
+pas = 1; % pas d2 ?echantillonnage en temps de la STFT
+% Choix de la fen^etre
+L = 100;% longueur de la fen^etre
+l=(0:L-1);
+
+%rect
+fen1 = ones(1,L);
+
+%Hanning:
+fen2 = 0.5*(1- cos((2*pi*l)/(L-1)));
+
+%Blackman:
+fen3 =(27/64)- 0.5*cos((2*pi*l)/(L-1)) + (5/64)*cos((4*pi*l)/(L-1));
+
+% Calcul de la Transform ?ee de Fourier à court terme
+[X,tp,fp]= stft(x,NFFT,Fe,fen1,pas);
+
+% Affichage
+figure(2)
+% Transform ?ee de Fourier `a court terme
+subplot('position',[0.07 0.1 0.67 0.58])
+imagesc(tp,fp,abs(X)); axis xy
+title('Spectrogramme')
+xlabel('Temps (sec)')
+ylabel('fréquence (Hz)')
+Xlim = axis; Xlim=Xlim(1:2);
+
+% Periodogramme
+subplot('position',[0.78 0.1 0.2 0.58])
+N2 = 8*N;
+freq = (0:N2-1)/N2*Fe; TFx = fft(x,N2);
+plot(abs(TFx(1:end/2)).^2/N,freq(1:end/2))
+xlabel('Puissance')
+title('Spectre')
+
+% Representation temporelle
+subplot('position',[0.07 0.75 0.67 0.2])
+plot(1/Fe*(1:length(x)),x)
+xlabel('Temps (sec)')
+ylabel('Amplitude')
+title('Représentation temporelle du signal')
+ax = axis; ax(1:2) = Xlim; axis(ax)
+
+
+%% 4.2 Analyse de signaux réels
+
+
+
+Fe=8000;
+N=1024;
+dt=1/Fe;
+t=(0:N-1)/Fe;
+f=(-(N-1)/2:(N-1)/2)*Fe/N ;
+
+%[x fs]= audioread('haendel.wav');
+%[x fs]= audioread('gong.wav');
+[x fs]= audioread('laughter.wav');
+t= 1/Fe*(1:length(x));
+figure;
+plot(t,x);
+title('Signal laughter')
+Xfft= fft(x);
+figure;
+N1=length(x);
+f2=(-(N1-1)/2:(N1-1)/2)*Fe/N1 ;
+plot(f,fftshift(abs(Xfft)));
+title('FFT laughter')
+
+% Parametres de la STFT
+NFFT = N; % taille des fft
+pas = 1; % pas d'echantillonnage en temps de la STFT
+% Choix de la fenêtre
+L = 110;% longueur de la fenêtre
+l=(0:L-1);
+
+%rect
+fen1 = ones(1,L);
+
+%Hanning:
+fen2 = 0.5*(1- cos((2*pi*l)/(L-1)));
+
+%Blackman:
+fen3 =(27/64)- 0.5*cos((2*pi*l)/(L-1)) + (5/64)*cos((4*pi*l)/(L-1));
+
+% Calcul de la Transform ?ee de Fourier à court terme
+[X,tp,fp]= stft(x,NFFT,Fe,fen1,pas);
+
+% Affichage
+figure ;
+% Transformee de Fourier à court terme
+subplot('position',[0.07 0.1 0.67 0.58])
+imagesc(tp,fp,abs(X)); axis xy
+title('Spectrogramme')
+xlabel('Temps (sec)')
+ylabel('fréquence (Hz)')
+Xlim = axis; Xlim=Xlim(1:2);
+
+% Periodogramme
+subplot('position',[0.78 0.1 0.2 0.58])
+N2 = 8*N;
+freq = (0:N2-1)/N2*Fe; TFx = fft(x,N2);
+plot(abs(TFx(1:end/2)).^2/N,freq(1:end/2))
+xlabel('Puissance')
+title('Spectre')
+
+% Representation temporelle
+subplot('position',[0.07 0.75 0.67 0.2])
+plot(1/Fe*(1:length(x)),x)
+xlabel('Temps (sec)')
+ylabel('Amplitude')
+title('Représentation temporelle du signal')
+ax = axis; ax(1:2) = Xlim; axis(ax)
+
+
+
+
+
+
+
