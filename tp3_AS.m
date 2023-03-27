@@ -77,6 +77,62 @@ title('estimateur 2 non-biaisé');
 %III)1)
 N=1024;
 x1=randn(1,N);
+%14)
+N=1024;
+n=0:N-1;
+
+x1= randn(1,N);
+
+f0= 0.1;
+f1=0.15;
+phi0= 2*pi*rand ;
+phi1= 2*pi*rand ;
+x3= cos(2*pi*f0*n + phi0) + cos(2*pi*f1*n + phi1);
+
+figure;
+subplot(2,1,1); plot(x1); title("Signal x1");
+subplot(2,1,2); plot(x3); title("Signal x3");
+
+L=[1 16 32 128];
+
+    Vp3=zeros(4,1024);
+    Mp3=zeros(4,1024);
+
+    Vp1=zeros(4,1024);
+    Mp1=zeros(4,1024);
+
+for i=1:4
+    M=N/L(i);
+    for k=1:L(i)
+        F3= fft(x3((k-1)*M+1:k*M),N);
+        P3=(abs(F3).^2)/M;
+        H3(i,:)=(1/L(i))*P3;
+
+        F1= fft(x1((k-1)*M+1:k*M),N);
+        P1=(abs(F1).^2)/M;
+        H1(i,:)=(1/L(i))*P1;
+    end
+    Vp3(i,:)=var(H3(i,:),0,1);
+    Mp3(i,:)=mean(H3(i,:),1);
+
+    Vp1(i,:)=var(H1(i,:),0,1);
+    Mp1(i,:)=mean(H1(i,:),1);
+end
+  
+figure;
+subplot(2,2,1); plot(1:1024,Mp1(1,:)); title(" périodogramme moyenné x1 L=1");
+subplot(2,2,2) ; plot(1:1024,Mp1(2,:)); title("périodogramme moyenné x1 L=16");
+subplot(2,2,3); plot(1:1024,Mp1(3,:)); title("périodogramme moyenné x1 L=32");
+subplot(2,2,4); plot(1:1024,Mp1(4,:)); title("périodogramme moyenné x1 L=128");
+
+figure;
+subplot(2,2,1); plot(1:1024,Mp3(1,:)); title(" périodogramme moyenné x3 L=1");
+subplot(2,2,2) ; plot(1:1024,Mp3(2,:)); title("périodogramme moyenné x3 L=16");
+subplot(2,2,3); plot(1:1024,Mp3(3,:)); title("périodogramme moyenné x3 L=32");
+subplot(2,2,4); plot(1:1024,Mp3(4,:)); title("périodogramme moyenné x3 L=128");
+
+
+
 
 figure; plot(x1); title("signal X1");
 
@@ -158,7 +214,7 @@ title("périodogramme 1000 réalisations")
 
 %% periodogramme moyenné
 
-%%
+
 %14)
 N=1024;
 n=0:N-1;
@@ -212,6 +268,61 @@ subplot(2,2,1); plot(1:1024,Mp3(1,:)); title(" périodogramme moyenné x3 L=1");
 subplot(2,2,2) ; plot(1:1024,Mp3(2,:)); title("périodogramme moyenné x3 L=16");
 subplot(2,2,3); plot(1:1024,Mp3(3,:)); title("périodogramme moyenné x3 L=32");
 subplot(2,2,4); plot(1:1024,Mp3(4,:)); title("périodogramme moyenné x3 L=128");
+
+
+%%
+
+%16
+
+N = 1024;
+n = (0:N-1);
+
+f0 = 0.1;
+phi0 = 2*pi*rand;
+x4 = cos(2*pi*f0*n+phi0) + 4*randn(1,N);
+
+figure;
+plot(n,x4); title('Signal x4');
+
+figure;
+periodogram(x4); title('Périodogramme');
+figure; 
+pwelch(x4); title('Périodogramme de Welch');
+
+
+%%
+
+%21
+
+N = 10000;
+a = -0.7;
+W = randn(2*N,1);
+X=filter(1,[1 a],W);
+X=X(N+1:end);
+
+figure;
+plot(X); title("Signal X");
+
+Y=X + 4*randn(N,1);
+
+figure;
+plot(Y); title("Signal Y");
+
+
+RY = xcorr(Y,'unbiased');
+RX = xcorr(X,'unbiased');
+
+RX0 = RX(N);
+RX1 = RX(N+1);
+RX2 = RX(N+2);
+
+%estimateur non-robuste
+a_enr= -RX1/RX0
+sigma_enr = RX0 - (RX1^2)/RX0
+%Estimateur robuste
+a_er = -RX2/RX1
+sigma_er = (RX1^2-RX2^2)/(RX2)
+
 
 
 
