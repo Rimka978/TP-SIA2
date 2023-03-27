@@ -72,3 +72,85 @@ plot(M2_nba);
 plot(M2_nbr);
 legend('moyenne','écart ajouté','écart retranché');
 title('estimateur 2 non-biaisé');
+
+%%
+%III)1)
+N=1024;
+x1=randn(1,N);
+
+figure; plot(x1); title("signal X1");
+
+
+R1_b=xcorr(x1,'biased');
+R1_nb=xcorr(x1,'unbiased');
+
+S1_b= fft(R1_b([N:end, 1:(N-1)]));
+S1_nb= fft(R1_nb([N:end, 1:(N-1)]));
+
+
+
+
+f=-(N-1):1:N-1 ;
+
+figure;
+subplot(2,1,1); plot(R1_b); title('Autocorrélation baisée');
+subplot(2,1,2); plot(R1_nb); title('Autocorrélation non-baisée');
+
+figure;
+subplot(2,1,1); plot(abs(S1_b)); title('DSP baisée');
+subplot(2,1,2); plot(abs(S1_nb)); title('DSP non-baisée');
+
+%%
+%III)2)
+%11
+N=1024;
+P= 2*N -1 ;
+Xfft=fft(x1, P);
+
+Sx_p=(1/N) *(abs(Xfft).^2);
+f= -(N-1):1:N-1;
+
+figure; 
+plot(f,fftshift(abs(Sx_p)),'*'); 
+hold on
+plot(f,fftshift(abs(S1_b))); 
+legend('périodogramme Sp','corrélogramme Sb');
+
+
+%% 13
+N=128; 
+P= 2*N -1 ;
+f= -(N-1):1:N-1;
+
+St= ones(1,255);
+
+for i=1:100
+x(:,i)=randn(1,N);
+Xfft=fft(x(:,i), P);
+Sx_pr(i,:)= fftshift(abs((1/N) *(abs(Xfft).^2)));
+end 
+
+MS_p= mean(Sx_pr,1);
+
+figure; 
+plot(f,MS_p); 
+hold on
+plot(f,St); 
+legend('périodogramme Sp','DSP theo');
+title("périodogramme 100 réalisations")
+
+for i=1:1000
+x(:,i)=randn(1,N);
+Xfft=fft(x(:,i), P);
+Sx_pr(i,:)= fftshift(abs((1/N) *(abs(Xfft).^2)));
+end 
+
+MS_p= mean(Sx_pr,1);
+
+figure; 
+plot(f,MS_p); 
+hold on
+plot(f,St); 
+legend('périodogramme Sp','DSP theo');
+title("périodogramme 1000 réalisations")
+
