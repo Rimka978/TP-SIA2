@@ -323,6 +323,8 @@ sigma_enr = RX0 - (RX1^2)/RX0
 a_er = -RX2/RX1
 sigma_er = (RX1^2-RX2^2)/(RX2)
 
+%%
+
 
 
 
